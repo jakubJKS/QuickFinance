@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">QuickFinance</string>
+<string name="app_name">QuickFinance</string>
+<string-array name="card_types">
+    <item>Debit Card</item>
+    <item>Credit Card</item>
+</string-array>
 </resources>
