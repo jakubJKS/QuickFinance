@@ -9,6 +9,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val splashScreen = installSplashScreen()
+        Thread.sleep(1500)
 
         // Po dokončení inicializačnej úlohy spusti LoginActivity
         startActivity(Intent(this, LoginActivity::class.java))

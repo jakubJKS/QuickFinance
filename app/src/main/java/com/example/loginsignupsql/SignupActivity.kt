@@ -23,23 +23,22 @@ class SignupActivity : AppCompatActivity() {
         binding.signupButton.setOnClickListener {
             val signupUsername = binding.signupUsername.text.toString()
             val signupPassword = binding.signupPassword.text.toString()
+            val repeatPassword = binding.repeatPassword.text.toString()
 
-            // Kontrola existencie používateľa s rovnakým menom aj heslom
-            if (isUserExists(signupUsername, signupPassword)) {
+            if (signupPassword != repeatPassword) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (databaseHelper.isUserExists(signupUsername)) {
                 Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show()
             } else {
                 signupDatabase(signupUsername, signupPassword)
             }
         }
 
-        // Add setOnEditorActionListener to signupUsername EditText
-        binding.signupUsername.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, keyEvent ->
-            if (actionId == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
-                binding.signupPassword.requestFocus() // Move focus to password EditText
-                return@OnEditorActionListener true
-            }
-            false
-        })
+        // Setup listeners for each EditText to handle the Enter key for focusing the next EditText
+        setupEditorActionListeners()
 
         binding.loginRedirect.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -48,8 +47,28 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun isUserExists(username: String, password: String): Boolean {
-        return databaseHelper.readUser(username, password)
+    private fun setupEditorActionListeners() {
+        binding.signupUsername.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == KeyEvent.KEYCODE_ENTER || (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                binding.signupPassword.requestFocus()
+                true
+            } else false
+        }
+
+        binding.signupPassword.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == KeyEvent.KEYCODE_ENTER || (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                binding.repeatPassword.requestFocus()
+                true
+            } else false
+        }
+
+        // Optionally, you could handle Enter on repeatPassword to attempt signup
+        binding.repeatPassword.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == KeyEvent.KEYCODE_ENTER || (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                binding.signupButton.performClick()
+                true
+            } else false
+        }
     }
 
     private fun signupDatabase(username: String, password: String) {

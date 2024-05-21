@@ -25,30 +25,52 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"/>
 
+
     <EditText
         android:id="@+id/signupUsername"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:imeOptions="actionNext"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/edittext_border"
         android:hint="Username"
         android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@id/signupPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/signupPassword" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/signupPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:imeOptions="actionNext"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/edittext_border"
         android:hint="Password"
         android:inputType="textPassword"
         android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@id/signupButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/repeatPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionNext"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edittext_border"
+        android:hint="Repeat Password"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@id/signupButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/signupButton" />
+        app:layout_constraintTop_toBottomOf="@id/signupPassword"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/signupButton"
@@ -60,6 +82,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/loginRedirect" />
+
 
     <TextView
         android:id="@+id/loginRedirect"
