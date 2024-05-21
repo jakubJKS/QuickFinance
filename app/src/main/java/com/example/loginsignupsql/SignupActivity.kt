@@ -1,11 +1,13 @@
 package com.example.loginsignupsql
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.loginsignupsql.databinding.ActivitySignupBinding
 
 class SignupActivity : AppCompatActivity() {
@@ -48,27 +50,36 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun setupEditorActionListeners() {
-        binding.signupUsername.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == KeyEvent.KEYCODE_ENTER || (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+        binding.signupUsername.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                binding.signupUsername.clearFocus()
                 binding.signupPassword.requestFocus()
                 true
             } else false
         }
 
-        binding.signupPassword.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == KeyEvent.KEYCODE_ENTER || (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+        binding.signupPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                binding.signupPassword.clearFocus()
                 binding.repeatPassword.requestFocus()
                 true
             } else false
         }
 
-        // Optionally, you could handle Enter on repeatPassword to attempt signup
-        binding.repeatPassword.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == KeyEvent.KEYCODE_ENTER || (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
-                binding.signupButton.performClick()
+        binding.repeatPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.repeatPassword.clearFocus()
+                hideKeyboard()
                 true
             } else false
         }
+    }
+
+
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.repeatPassword.windowToken, 0)
     }
 
     private fun signupDatabase(username: String, password: String) {

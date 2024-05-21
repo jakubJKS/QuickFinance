@@ -33,11 +33,14 @@
         android:layout_marginBottom="12dp"
         android:background="@drawable/edittext_border"
         android:hint="Username"
+        android:imeOptions="actionNext"
+        android:inputType="text"
         android:padding="12dp"
         app:layout_constraintBottom_toTopOf="@id/loginPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <EditText
         android:id="@+id/loginPassword"
@@ -47,10 +50,12 @@
         android:background="@drawable/edittext_border"
         android:hint="Password"
         android:inputType="textPassword"
+        android:imeOptions="actionDone"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/loginButton" />
+
 
     <Button
         android:id="@+id/loginButton"
