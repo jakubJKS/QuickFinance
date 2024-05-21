@@ -12,31 +12,73 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LoginSignupSql"
         tools:targetApi="31">
+
         <activity
             android:name=".CustomizeAccountActivity"
             android:exported="true" />
+
         <activity
             android:name=".HomeActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AnimatedSplash.MySplash"> <!-- Táto téma by mala byť použitá, ak potrebuješ špecifickú úvodnú obrazovku -->
+            android:theme="@style/Theme.AnimatedSplash.MySplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- LoginActivity -->
+        </activity>
+
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true" />
 
-            <!-- No intent-filter here since SplashActivity is now the launcher -->
-        </activity> <!-- SignupActivity -->
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
-    </application>
 
+        <!-- New activities for each clickable box -->
+        <activity
+            android:name=".Item1Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Item2Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Item3Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Item4Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Item5Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Item6Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".AccountBalanceActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Product1Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Product2Activity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Product3Activity"
+            android:exported="true" />
+
+    </application>
 </manifest>
