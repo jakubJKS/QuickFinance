@@ -93,4 +93,5 @@ class SignupActivity : AppCompatActivity() {
             Toast.makeText(this, "Signup Failed", Toast.LENGTH_SHORT).show()
         }
     }
+
 }
