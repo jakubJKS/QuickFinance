@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.loginsignupsql.databinding.ActivitySignupBinding
+import com.google.android.material.snackbar.Snackbar
 
 class SignupActivity : AppCompatActivity() {
 
@@ -27,13 +27,23 @@ class SignupActivity : AppCompatActivity() {
             val signupPassword = binding.signupPassword.text.toString()
             val repeatPassword = binding.repeatPassword.text.toString()
 
+            if (!isUsernameValid(signupUsername)) {
+                showMessage("Username must be at least 5 characters long")
+                return@setOnClickListener
+            }
+
+            if (!isPasswordValid(signupPassword)) {
+                showMessage("Password must be at least 5 characters long and contain at least one number")
+                return@setOnClickListener
+            }
+
             if (signupPassword != repeatPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                showMessage("Passwords do not match")
                 return@setOnClickListener
             }
 
             if (databaseHelper.isUserExists(signupUsername)) {
-                Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show()
+                showMessage("User already exists")
             } else {
                 signupDatabase(signupUsername, signupPassword)
             }
@@ -75,8 +85,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.repeatPassword.windowToken, 0)
@@ -85,13 +93,24 @@ class SignupActivity : AppCompatActivity() {
     private fun signupDatabase(username: String, password: String) {
         val insertedRowId = databaseHelper.insertUser(username, password)
         if (insertedRowId != -1L) {
-            Toast.makeText(this, "Signup Successful", Toast.LENGTH_SHORT).show()
+            showMessage("Signup Successful")
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         } else {
-            Toast.makeText(this, "Signup Failed", Toast.LENGTH_SHORT).show()
+            showMessage("Signup Failed")
         }
     }
 
+    private fun isUsernameValid(username: String): Boolean {
+        return username.length >= 5
+    }
+
+    private fun isPasswordValid(password: String): Boolean {
+        return password.length >= 5 && password.any { it.isDigit() }
+    }
+
+    private fun showMessage(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+    }
 }

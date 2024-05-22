@@ -1,9 +1,9 @@
 <resources>
-<string name="app_name">QuickFinance</string>
+    <string name="app_name">QuickFinance</string>
     <string name="welcome_user">Welcome, %1$s!</string>
     <string name="customize_account">Customize Account</string>
-<string-array name="card_types">
-    <item>Debit Card</item>
-    <item>Credit Card</item>
-</string-array>
+    <string-array name="card_types">
+        <item>Debit Card</item>
+        <item>Credit Card</item>
+    </string-array>
 </resources>

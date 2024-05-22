@@ -6,7 +6,7 @@
     android:padding="16dp"
     tools:context=".CustomizeAccountActivity">
 
-    <!-- Username EditText -->
+    <!-- Username EditText (Non-editable) -->
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
@@ -14,9 +14,10 @@
         android:hint="Username"
         android:padding="16dp"
         android:layout_marginBottom="16dp"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:enabled="false" />
 
-    <!-- Password EditText -->
+    <!-- Password EditText (Non-editable and visible) -->
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
@@ -25,7 +26,8 @@
         android:padding="16dp"
         android:layout_below="@id/usernameEditText"
         android:layout_marginBottom="16dp"
-        android:inputType="textPassword" />
+        android:inputType="text"
+        android:enabled="false" />
 
     <!-- Full Name EditText -->
     <EditText

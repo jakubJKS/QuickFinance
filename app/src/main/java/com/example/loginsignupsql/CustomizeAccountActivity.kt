@@ -23,27 +23,28 @@ class CustomizeAccountActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
         val loggedInUsername = sharedPreferences.getString("USERNAME", null)
+        val loggedInPassword = sharedPreferences.getString("PASSWORD", null)
 
-        if (loggedInUsername == null) {
+        if (loggedInUsername == null || loggedInPassword == null) {
             Log.e("CustomizeAccountActivity", "No user logged in")
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        loadUserData(loggedInUsername, sharedPreferences)
+        loadUserData(loggedInUsername, loggedInPassword, sharedPreferences)
 
         binding.saveButton.setOnClickListener {
             saveUserData(loggedInUsername, sharedPreferences)
         }
     }
 
-    private fun loadUserData(username: String, sharedPreferences: SharedPreferences) {
+    private fun loadUserData(username: String, password: String, sharedPreferences: SharedPreferences) {
         try {
             val userInfo = databaseHelper.getUserInformation(username)
             if (userInfo != null) {
                 binding.usernameEditText.setText(username)
-                binding.passwordEditText.setText(sharedPreferences.getString("PASSWORD", ""))
+                binding.passwordEditText.setText(password)
                 binding.fullnameEditText.setText(userInfo.getAsString("fullname"))
                 binding.emailEditText.setText(userInfo.getAsString("email"))
                 binding.phoneEditText.setText(userInfo.getAsString("phone"))
@@ -63,20 +64,22 @@ class CustomizeAccountActivity : AppCompatActivity() {
         val phone = binding.phoneEditText.text.toString()
         val address = binding.addressEditText.text.toString()
 
-        if (username.isEmpty() || password.isEmpty() || fullname.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
+        if (fullname.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             return
         }
 
         try {
+            // Update user information in the database
             databaseHelper.updateUserInformation(username, fullname, email, phone, address)
-            Toast.makeText(this, "Information Saved", Toast.LENGTH_SHORT).show()
 
+            // Update the password in SharedPreferences
             with(sharedPreferences.edit()) {
                 putString("PASSWORD", password)
                 apply()
             }
 
+            Toast.makeText(this, "Information Saved", Toast.LENGTH_SHORT).show()
             finish()
         } catch (e: Exception) {
             Log.e("CustomizeAccountActivity", "Error saving user data", e)

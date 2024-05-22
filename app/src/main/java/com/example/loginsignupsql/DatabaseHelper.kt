@@ -11,7 +11,7 @@ class DatabaseHelper(private val context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "UserDatabase.db"
-        private const val DATABASE_VERSION = 2  // Incremented version to force recreation
+        private const val DATABASE_VERSION = 2
         private const val TABLE_NAME = "data"
         private const val COLUMN_ID = "id"
         private const val COLUMN_USERNAME = "username"
@@ -104,20 +104,22 @@ class DatabaseHelper(private val context: Context) :
         val selection = "$COLUMN_USERNAME = ?"
         val selectionArgs = arrayOf(username)
         val cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null)
-        return if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             val values = ContentValues().apply {
+                put(COLUMN_USERNAME, cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME)))
+                // You can add other columns if needed
                 put(COLUMN_FULLNAME, cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FULLNAME)))
                 put(COLUMN_EMAIL, cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)))
                 put(COLUMN_PHONE, cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)))
                 put(COLUMN_ADDRESS, cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ADDRESS)))
             }
             cursor.close()
-            Log.d("DatabaseHelper", "getUserInformation: username = $username, values = $values")
-            values
+            Log.d("DatabaseHelper", "Fetched User Information: $values")
+            return values
         } else {
             cursor.close()
-            Log.d("DatabaseHelper", "getUserInformation: username = $username, no user found")
-            null
+            Log.e("DatabaseHelper", "No user information found for username: $username")
+            return null
         }
     }
 }
