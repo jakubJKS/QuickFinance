@@ -1,84 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".CustomizeAccountActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Username EditText (Non-editable) -->
-    <EditText
-        android:id="@+id/usernameEditText"
+    <data></data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Username"
+        android:layout_height="match_parent"
         android:padding="16dp"
-        android:layout_marginBottom="16dp"
-        android:inputType="textPersonName"
-        android:enabled="false" />
+        tools:context=".CustomizeAccountActivity">
 
-    <!-- Password EditText (Non-editable and visible) -->
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:padding="16dp"
-        android:layout_below="@id/usernameEditText"
-        android:layout_marginBottom="16dp"
-        android:inputType="text"
-        android:enabled="false" />
+        <!-- Username EditText (Non-editable) -->
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="textPersonName"
+            android:enabled="false" />
 
-    <!-- Full Name EditText -->
-    <EditText
-        android:id="@+id/fullnameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Full Name"
-        android:padding="16dp"
-        android:layout_below="@id/passwordEditText"
-        android:layout_marginBottom="16dp"
-        android:inputType="textPersonName" />
+        <!-- Password EditText (Non-editable and visible) -->
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:padding="16dp"
+            android:layout_below="@id/usernameEditText"
+            android:layout_marginBottom="16dp"
+            android:inputType="text"
+            android:enabled="false" />
 
-    <!-- Email EditText -->
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"
-        android:padding="16dp"
-        android:layout_below="@id/fullnameEditText"
-        android:layout_marginBottom="16dp"
-        android:inputType="textEmailAddress" />
+        <!-- Full Name EditText -->
+        <EditText
+            android:id="@+id/fullnameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Full Name"
+            android:padding="16dp"
+            android:layout_below="@id/passwordEditText"
+            android:layout_marginBottom="16dp"
+            android:inputType="textPersonName" />
 
-    <!-- Phone EditText -->
-    <EditText
-        android:id="@+id/phoneEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Phone"
-        android:padding="16dp"
-        android:layout_below="@id/emailEditText"
-        android:layout_marginBottom="16dp"
-        android:inputType="phone" />
+        <!-- Email EditText -->
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:padding="16dp"
+            android:layout_below="@id/fullnameEditText"
+            android:layout_marginBottom="16dp"
+            android:inputType="textEmailAddress" />
 
-    <!-- Address EditText -->
-    <EditText
-        android:id="@+id/addressEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Address"
-        android:padding="16dp"
-        android:layout_below="@id/phoneEditText"
-        android:layout_marginBottom="16dp"
-        android:inputType="textPostalAddress" />
+        <!-- Phone EditText -->
+        <EditText
+            android:id="@+id/phoneEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone"
+            android:padding="16dp"
+            android:layout_below="@id/emailEditText"
+            android:layout_marginBottom="16dp"
+            android:inputType="phone" />
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:layout_below="@id/addressEditText"
-        android:padding="16dp" />
-</RelativeLayout>
+        <!-- Address EditText -->
+        <EditText
+            android:id="@+id/addressEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:padding="16dp"
+            android:layout_below="@id/phoneEditText"
+            android:layout_marginBottom="16dp"
+            android:inputType="textPostalAddress" />
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:layout_below="@id/addressEditText"
+            android:padding="16dp" />
+    </RelativeLayout>
+</layout>

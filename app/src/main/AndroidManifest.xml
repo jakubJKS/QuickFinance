@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- Add the POST_NOTIFICATIONS permission -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -12,86 +14,70 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LoginSignupSql"
         tools:targetApi="31">
-
+        <activity
+            android:name=".KontaktyActivity"
+            android:exported="false" />
         <activity
             android:name=".PrehladActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".KontaktyActivity"
-            android:exported="false" />
-
         <activity
             android:name=".CustomizeAccountActivity"
             android:exported="true" />
-
         <activity
             android:name=".HomeActivity"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AnimatedSplash.MySplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
-
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
-
         <activity
             android:name=".Item1Activity"
             android:exported="true" />
-
         <activity
             android:name=".Item2Activity"
             android:exported="true" />
-
         <activity
             android:name=".Item3Activity"
             android:exported="true" />
-
         <activity
             android:name=".Item4Activity"
             android:exported="true" />
-
         <activity
             android:name=".Item5Activity"
             android:exported="true" />
-
         <activity
             android:name=".Item6Activity"
             android:exported="true" />
-
         <activity
             android:name=".AccountBalanceActivity"
             android:exported="true" />
-
         <activity
             android:name=".Product1Activity"
             android:exported="true" />
-
         <activity
             android:name=".Product2Activity"
             android:exported="true" />
-
         <activity
             android:name=".Product3Activity"
             android:exported="true" />
-
     </application>
 
 </manifest>
