@@ -1,4 +1,4 @@
-package com.example.loginsignupsql
+package com.example.loginsignupsql.com.example.loginsignupsql.PrehladAKontaktyMenu
 
 import android.content.Intent
 import android.os.Bundle

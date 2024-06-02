@@ -2,10 +2,14 @@ package com.example.loginsignupsql
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.loginsignupsql.com.example.loginsignupsql.ItemActivities.*
+import com.example.loginsignupsql.com.example.loginsignupsql.PrehladAKontaktyMenu.KontaktyActivity
 import com.example.loginsignupsql.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
@@ -18,6 +22,11 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Nastavenie farby status baru
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.dark_gray)
+        }
 
         databaseHelper = DatabaseHelper(this)
 
@@ -40,13 +49,13 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // Setup click listeners for horizontal scrollable items
-        binding.item1.setOnClickListener {
+        binding.vydavky.setOnClickListener {
             startActivity(Intent(this, Item1Activity::class.java))
         }
-        binding.item2.setOnClickListener {
+        binding.byvanie.setOnClickListener {
             startActivity(Intent(this, Item2Activity::class.java))
         }
-        binding.item3.setOnClickListener {
+        binding.strava.setOnClickListener {
             startActivity(Intent(this, Item3Activity::class.java))
         }
         binding.item4.setOnClickListener {
@@ -79,7 +88,9 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.contactsButton.setOnClickListener {
-            startActivity(Intent(this, KontaktyActivity::class.java))
+            val intent = Intent(this, KontaktyActivity::class.java)
+            intent.putExtra("username", loggedInUsername)
+            startActivity(intent)
         }
     }
 

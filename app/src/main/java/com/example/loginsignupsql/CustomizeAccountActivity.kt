@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.loginsignupsql.databinding.ActivityCustomizeAccountBinding
 
 class CustomizeAccountActivity : AppCompatActivity() {
@@ -18,6 +19,9 @@ class CustomizeAccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCustomizeAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Nastavenie farby status baru
+        window.statusBarColor = ContextCompat.getColor(this, R.color.dark_gray)
 
         databaseHelper = DatabaseHelper(this)
 

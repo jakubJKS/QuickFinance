@@ -1,7 +1,8 @@
-package com.example.loginsignupsql
+package com.example.loginsignupsql.com.example.loginsignupsql.ItemActivities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.loginsignupsql.R
 
 class Item5Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

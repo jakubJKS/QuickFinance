@@ -6,4 +6,9 @@
         <item>Debit Card</item>
         <item>Credit Card</item>
     </string-array>
+
+    <string name="first_name_hint">Krstné meno</string>
+    <string name="last_name_hint">Priezvisko</string>
+    <string name="iban_hint">IBAN</string>
+    <string name="add_contact_button_text">Pridať Kontakt</string>
 </resources>

@@ -15,10 +15,10 @@
         android:theme="@style/Theme.LoginSignupSql"
         tools:targetApi="31">
         <activity
-            android:name=".KontaktyActivity"
+            android:name=".com.example.loginsignupsql.PrehladAKontaktyMenu.KontaktyActivity"
             android:exported="false" />
         <activity
-            android:name=".PrehladActivity"
+            android:name=".com.example.loginsignupsql.PrehladAKontaktyMenu.PrehladActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,34 +49,34 @@
             android:name=".SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".Item1Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Item1Activity"
             android:exported="true" />
         <activity
-            android:name=".Item2Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Item2Activity"
             android:exported="true" />
         <activity
-            android:name=".Item3Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Item3Activity"
             android:exported="true" />
         <activity
-            android:name=".Item4Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Item4Activity"
             android:exported="true" />
         <activity
-            android:name=".Item5Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Item5Activity"
             android:exported="true" />
         <activity
-            android:name=".Item6Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Item6Activity"
             android:exported="true" />
         <activity
-            android:name=".AccountBalanceActivity"
+            android:name=".com.example.loginsignupsql.ItemActivities.AccountBalanceActivity"
             android:exported="true" />
         <activity
-            android:name=".Product1Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Product1Activity"
             android:exported="true" />
         <activity
-            android:name=".Product2Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Product2Activity"
             android:exported="true" />
         <activity
-            android:name=".Product3Activity"
+            android:name=".com.example.loginsignupsql.ItemActivities.Product3Activity"
             android:exported="true" />
     </application>
 
