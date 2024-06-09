@@ -1,7 +1,11 @@
 package com.example.loginsignupsql.PrehladAKontaktyMenu
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -45,16 +50,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.loginsignupsql.DatabaseHelper
 import com.example.loginsignupsql.HomeActivity
+import com.example.loginsignupsql.R
 import com.example.loginsignupsql.ui.theme.QuickFinanceTheme
 
 class KontaktyActivity : ComponentActivity() {
 
     private lateinit var databaseHelper: DatabaseHelper
     private var userId: Long = -1
+    private val channelId = "contact_deletion_channel"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +92,45 @@ class KontaktyActivity : ComponentActivity() {
             Toast.makeText(this, "Username not found, returning to previous screen.", Toast.LENGTH_SHORT).show()
             finish()
         }
+
+        // Create notification channel
+        createNotificationChannel()
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Contact Deletion"
+            val descriptionText = "Notifications for contact deletions"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun sendDeletionNotification(context: Context, contact: Contact) {
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_notification) // Ensure you have an icon drawable
+            .setContentTitle("Contact Deleted")
+            .setContentText("Deleted contact: ${contact.firstname} ${contact.lastname}")
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // Set high priority to show heads-up notification
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // To ensure it appears on lock screen
+
+        with(NotificationManagerCompat.from(context)) {
+            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                notify(contact.id.toInt(), builder.build())
+            } else {
+                // Request permission from the user
+                androidx.core.app.ActivityCompat.requestPermissions(
+                    this@KontaktyActivity,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    1
+                )
+            }
+        }
     }
 
     @Composable
@@ -93,6 +144,10 @@ class KontaktyActivity : ComponentActivity() {
         var firstname by remember { mutableStateOf("") }
         var lastname by remember { mutableStateOf("") }
         var iban by remember { mutableStateOf("") }
+
+        // State to handle popup visibility and selected contact details
+        var showPopup by remember { mutableStateOf(false) }
+        var selectedContact by remember { mutableStateOf<Contact?>(null) }
 
         Box(modifier = Modifier.fillMaxSize().background(Color(0xFF121212))) {  // Using Box to wrap components
             Column(
@@ -181,17 +236,19 @@ class KontaktyActivity : ComponentActivity() {
                     Text("Save Contact", color = Color.Black)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+                // Scrolling ContactsList
+                ContactsList(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    onContactClick = { contact ->
+                        selectedContact = contact
+                        showPopup = true
+                    }
+                )
                 Spacer(modifier = Modifier.height(80.dp)) // Extra space to make sure content is scrollable above the buttons
             }
-
-            // Scrolling ContactsList
-            ContactsList(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(top = 300.dp, bottom = 100.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            )
 
             // Row for buttons placed at the bottom of the screen
             Row(
@@ -229,18 +286,28 @@ class KontaktyActivity : ComponentActivity() {
                     Text("Kontakty", color = Color.Black)
                 }
             }
+
+            // Show Popup if needed
+            if (showPopup && selectedContact != null) {
+                ContactDetailPopup(contact = selectedContact!!, onDismiss = { showPopup = false }, onDelete = {
+                    databaseHelper.deleteContact(selectedContact!!.id)
+                    sendDeletionNotification(context, selectedContact!!)
+                    showPopup = false
+                })
+            }
         }
     }
 
     @Composable
-    fun ContactsList(modifier: Modifier = Modifier) {
+    fun ContactsList(modifier: Modifier = Modifier, onContactClick: (Contact) -> Unit) {
         val cursor: Cursor = databaseHelper.getAllContacts(userId)
-        val contacts = mutableListOf<String>()
+        val contacts = mutableListOf<Contact>()
         while (cursor.moveToNext()) {
-            val firstname = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_FIRSTNAME))
-            val lastname = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_LASTNAME))
-            val iban = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_IBAN))
-            contacts.add("$firstname $lastname - $iban")
+            val id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"))
+            val firstname = cursor.getString(cursor.getColumnIndexOrThrow("firstname"))
+            val lastname = cursor.getString(cursor.getColumnIndexOrThrow("lastname"))
+            val iban = cursor.getString(cursor.getColumnIndexOrThrow("iban"))
+            contacts.add(Contact(id, firstname, lastname, iban))
         }
         cursor.close()
 
@@ -249,8 +316,47 @@ class KontaktyActivity : ComponentActivity() {
                 if (index > 0) {
                     Divider(color = Color.Gray, thickness = 1.dp)
                 }
-                Text(text = contact, color = Color.White, modifier = Modifier.padding(vertical = 8.dp))
+                Text(
+                    text = "${contact.firstname} ${contact.lastname} - ${contact.iban}",
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .clickable { onContactClick(contact) }
+                )
             }
         }
     }
+
+    @Composable
+    fun ContactDetailPopup(contact: Contact, onDismiss: () -> Unit, onDelete: () -> Unit) {
+        Dialog(onDismissRequest = onDismiss, properties = DialogProperties()) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = MaterialTheme.shapes.medium,
+                color = Color(0xFF333333) // Background color for the popup
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(text = "Detail Kontakt", style = MaterialTheme.typography.headlineMedium, color = Color.White)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = contact.firstname, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = contact.lastname, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = contact.iban, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(horizontalArrangement = Arrangement.End) {
+                        Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)) {
+                            Text("OK", color = Color.White)
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(onClick = onDelete, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                            Text("Delete", color = Color.White)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    data class Contact(val id: Long, val firstname: String, val lastname: String, val iban: String)
 }

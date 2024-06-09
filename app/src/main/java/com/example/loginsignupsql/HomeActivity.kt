@@ -173,7 +173,7 @@ class HomeActivity : ComponentActivity() {
                 .width(120.dp)
                 .height(60.dp)
                 .background(Color.Black, shape = RoundedCornerShape(16.dp))
-                .border(2.dp, Color.Yellow, shape = RoundedCornerShape(16.dp))
+                .border(2.dp, Color.Yellow, shape = RoundedCornerShape(10.dp))
                 .padding(16.dp)
         ) {
             Text(text = text, style = MaterialTheme.typography.bodyLarge, color = Color.White)
@@ -188,7 +188,7 @@ class HomeActivity : ComponentActivity() {
                 .fillMaxWidth()
                 .height(150.dp) // Use Dp type for height
                 .background(Color.Black, shape = RoundedCornerShape(16.dp))
-                .border(2.dp, Color.Yellow, shape = RoundedCornerShape(16.dp))
+                .border(2.dp, Color.Yellow, shape = RoundedCornerShape(10.dp))
                 .padding(16.dp)
         ) {
             Text(text = text, style = MaterialTheme.typography.bodyLarge, color = Color.White)
