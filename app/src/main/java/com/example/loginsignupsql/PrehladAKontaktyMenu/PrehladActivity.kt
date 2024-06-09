@@ -1,26 +1,57 @@
-package com.example.loginsignupsql.com.example.loginsignupsql.PrehladAKontaktyMenu
+package com.example.loginsignupsql.PrehladAKontaktyMenu
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.loginsignupsql.databinding.ActivityPrehladBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.loginsignupsql.ui.theme.QuickFinanceTheme
 
-class PrehladActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityPrehladBinding
-
+class PrehladActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPrehladBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        binding.buttonPrehlad.setOnClickListener {
-            // Already on Prehľad, no action needed
+        setContent {
+            QuickFinanceTheme {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    PrehladScreen()
+                }
+            }
         }
+    }
 
-        binding.buttonKontakty.setOnClickListener {
-            val intent = Intent(this, KontaktyActivity::class.java)
-            startActivity(intent)
+    @Composable
+    fun PrehladScreen() {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = { /* No action needed, already on Prehľad */ },
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text("Prehľad")
+            }
+            Button(
+                onClick = {
+                    val intent = Intent(this@PrehladActivity, KontaktyActivity::class.java)
+                    startActivity(intent)
+                },
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text("Kontakty")
+            }
         }
     }
 }

@@ -2,14 +2,21 @@ package com.example.loginsignupsql
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.loginsignupsql.ui.theme.QuickFinanceTheme
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val splashScreen = installSplashScreen()
-        Thread.sleep(1500)
+        installSplashScreen()
+
+        setContent {
+            QuickFinanceTheme {
+                // Set your splash screen here if you want to customize it
+            }
+        }
 
         // Po dokončení inicializačnej úlohy spusti LoginActivity
         startActivity(Intent(this, LoginActivity::class.java))

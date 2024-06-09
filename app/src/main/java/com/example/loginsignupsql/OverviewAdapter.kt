@@ -9,19 +9,22 @@ import androidx.recyclerview.widget.RecyclerView
 class OverviewAdapter(private val overviewItems: List<String>) : RecyclerView.Adapter<OverviewAdapter.OverviewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OverviewViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
-        return OverviewViewHolder(view)
+        val inflater = LayoutInflater.from(parent.context)
+        val itemView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false)
+        return OverviewViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: OverviewViewHolder, position: Int) {
-        holder.textView.text = overviewItems[position]
+        holder.bind(overviewItems[position])
     }
 
-    override fun getItemCount(): Int {
-        return overviewItems.size
-    }
+    override fun getItemCount(): Int = overviewItems.size
 
     class OverviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(android.R.id.text1)
+        private val textView: TextView = itemView.findViewById(android.R.id.text1)
+
+        fun bind(text: String) {
+            textView.text = text
+        }
     }
 }
