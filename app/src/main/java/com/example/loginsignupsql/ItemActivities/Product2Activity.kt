@@ -174,6 +174,27 @@ suspend fun generatePDF(context: Context) {
     val page = pdfDocument.startPage(pageInfo)
     val canvas = page.canvas
 
+    // Draw the header "QUICKFINANCE" at the top center of the PDF
+    paint.textAlign = Paint.Align.CENTER
+    paint.textSize = 36f
+    paint.isFakeBoldText = true
+    val headerX = pageInfo.pageWidth / 2f
+    val headerY = 50f // Adjust the Y position as needed
+
+    // Draw "QUICK" in yellow
+    paint.color = android.graphics.Color.YELLOW
+    canvas.drawText("QUICK", headerX - paint.measureText("FINANCE") / 2, headerY, paint)
+
+    // Draw "FINANCE" in black
+    paint.color = android.graphics.Color.BLACK
+    canvas.drawText("FINANCE", headerX + paint.measureText("QUICK") / 2, headerY, paint)
+
+    // Reset paint settings for user information
+    paint.textAlign = Paint.Align.LEFT
+    paint.textSize = 14f
+    paint.isFakeBoldText = false
+    paint.color = android.graphics.Color.BLACK
+
     // Draw user information on the PDF
     canvas.drawText("Username: $username", 100f, 100f, paint)
     canvas.drawText("Full Name: $fullname", 100f, 120f, paint)
@@ -193,7 +214,7 @@ suspend fun generatePDF(context: Context) {
 
     val resolver = context.contentResolver
     val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, "Sample.pdf")
+        put(MediaStore.MediaColumns.DISPLAY_NAME, "QuickFinance.pdf") // Change the filename here
         put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
         put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS)
     }
@@ -217,6 +238,7 @@ suspend fun generatePDF(context: Context) {
 
     pdfDocument.close()
 }
+
 
 fun checkPermissions(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -1,6 +1,7 @@
 package com.example.loginsignupsql.itemactivities
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ class AccountBalanceViewModel(private val context: Context, private val userId: 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             // Load transactions for the current user
+            Log.d("AccountBalanceViewModel", "Initializing transactions for User ID: $userId")
             loadTransactionsForUser(userId)
             startPeriodicTransactionUpdate()
         }
@@ -28,6 +30,7 @@ class AccountBalanceViewModel(private val context: Context, private val userId: 
     fun refreshTransactions() {
         viewModelScope.launch(Dispatchers.IO) {
             // Reload transactions for the current user
+            Log.d("AccountBalanceViewModel", "Refreshing transactions for User ID: $userId")
             loadTransactionsForUser(userId)
         }
     }
@@ -35,6 +38,7 @@ class AccountBalanceViewModel(private val context: Context, private val userId: 
     private suspend fun startPeriodicTransactionUpdate() {
         while (true) {
             delay(10000) // Wait for 10 seconds
+            Log.d("AccountBalanceViewModel", "Adding random transaction for User ID: $userId")
             addRandomTransactionForCurrentUser()
         }
     }
@@ -42,6 +46,7 @@ class AccountBalanceViewModel(private val context: Context, private val userId: 
     private suspend fun addRandomTransactionForCurrentUser() {
         val randomAmount = Random.nextDouble(10.0, 150.0)
         db.insertTransaction(randomAmount, userId)
+        Log.d("AccountBalanceViewModel", "Inserted random transaction of amount $randomAmount for User ID: $userId")
         loadTransactionsForUser(userId)
     }
 
@@ -56,9 +61,9 @@ class AccountBalanceViewModel(private val context: Context, private val userId: 
             }
             close()
         }
+        Log.d("AccountBalanceViewModel", "Loaded ${transactionsList.size} transactions for User ID: $userId")
         _transactions.postValue(transactionsList)
     }
-
 }
 
 data class Transaction(val amount: Double, val timestamp: String)

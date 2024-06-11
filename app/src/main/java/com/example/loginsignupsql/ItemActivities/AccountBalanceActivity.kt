@@ -2,6 +2,7 @@ package com.example.loginsignupsql.itemactivities
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.loginsignupsql.AddTransactionWorker
 import com.example.loginsignupsql.ui.theme.QuickFinanceTheme
 import kotlinx.coroutines.delay
@@ -45,16 +47,18 @@ class AccountBalanceActivity : ComponentActivity() {
         window.statusBarColor = Color(0xFF121212).toArgb()
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
+        val userId = getCurrentUserId()
+        Log.d("AccountBalanceActivity", "Current User ID: $userId")
+
         // Schedule the periodic work
         val workRequest = PeriodicWorkRequestBuilder<AddTransactionWorker>(15, TimeUnit.MINUTES)
+            .setInputData(workDataOf("user_id" to userId))
             .build()
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "AddTransactionWork",
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-
-        val userId = getCurrentUserId() // Replace with your logic to get the current user ID
 
         setContent {
             QuickFinanceTheme {
@@ -66,9 +70,10 @@ class AccountBalanceActivity : ComponentActivity() {
     }
 
     private fun getCurrentUserId(): Long {
-        // Replace this with your logic to get the current user ID
         val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getLong("user_id", 1L) // Default to user ID 1 if not found
+        val userId = sharedPreferences.getLong("user_id", 1L)
+        Log.d("AccountBalanceActivity", "Retrieved User ID from SharedPreferences: $userId")
+        return userId
     }
 }
 
@@ -82,6 +87,7 @@ fun AccountBalanceScreen(userId: Long) {
 
     // Load transactions initially
     LaunchedEffect(Unit) {
+        Log.d("AccountBalanceScreen", "Loading initial transactions for User ID: $userId")
         viewModel.refreshTransactions()
     }
 
@@ -89,6 +95,7 @@ fun AccountBalanceScreen(userId: Long) {
     LaunchedEffect(Unit) {
         while (true) {
             delay(10000) // Every 10 seconds
+            Log.d("AccountBalanceScreen", "Refreshing transactions for User ID: $userId")
             viewModel.refreshTransactions()
         }
     }

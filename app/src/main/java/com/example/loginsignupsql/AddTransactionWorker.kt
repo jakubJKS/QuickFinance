@@ -1,6 +1,7 @@
 package com.example.loginsignupsql
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import kotlin.random.Random
@@ -9,18 +10,16 @@ class AddTransactionWorker(context: Context, workerParams: WorkerParameters) : W
     private val db = DatabaseHelper(context)
 
     override fun doWork(): Result {
-        val cursor = db.getAllUsers()
-        with(cursor) {
-            while (moveToNext()) {
-                val userId = getLong(getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID))
-                val randomAmount = Random.nextDouble(10.0, 150.0)
-                val user = db.getUserById(userId)
-                if (user.createdAt <= db.getCurrentDateTime()) {
-                    db.insertTransaction(randomAmount, userId)
-                }
-            }
-            close()
+        val userId = inputData.getLong("user_id", -1)
+        if (userId == -1L) {
+            Log.e("AddTransactionWorker", "Invalid User ID: $userId")
+            return Result.failure()
         }
+
+        val randomAmount = Random.nextDouble(10.0, 150.0)
+        db.insertTransaction(randomAmount, userId)
+        Log.d("AddTransactionWorker", "Inserted random transaction of amount $randomAmount for User ID: $userId")
+
         return Result.success()
     }
 }

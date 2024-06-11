@@ -3,6 +3,7 @@ package com.example.loginsignupsql
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -183,12 +184,13 @@ class LoginActivity : ComponentActivity() {
         val databaseHelper = DatabaseHelper(context)
         val userExists = databaseHelper.readUser(username, password)
         if (userExists) {
-            val sharedPreferences = context.getSharedPreferences("com.example.loginsignupsql.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE)
+            val userId = databaseHelper.getUserId(username) // Předpokládám, že máte metodu na získání userId
+            val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
             with(sharedPreferences.edit()) {
-                putString("USERNAME", username)
-                putString("PASSWORD", password)
+                putLong("user_id", userId)
                 apply()
             }
+            Log.d("LoginActivity", "Stored User ID: $userId")
 
             Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
             val intent = Intent(context, HomeActivity::class.java)
@@ -197,4 +199,5 @@ class LoginActivity : ComponentActivity() {
             Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
         }
     }
+
 }
