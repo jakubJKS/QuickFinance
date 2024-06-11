@@ -14,7 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -141,19 +142,22 @@ class KontaktyActivity : ComponentActivity() {
         val lastnameFocusRequester = remember { FocusRequester() }
         val ibanFocusRequester = remember { FocusRequester() }
 
-        var firstname by remember { mutableStateOf("") }
-        var lastname by remember { mutableStateOf("") }
-        var iban by remember { mutableStateOf("") }
+        var firstname by rememberSaveable { mutableStateOf("") }
+        var lastname by rememberSaveable { mutableStateOf("") }
+        var iban by rememberSaveable { mutableStateOf("") }
 
         // State to handle popup visibility and selected contact details
         var showPopup by remember { mutableStateOf(false) }
         var selectedContact by remember { mutableStateOf<Contact?>(null) }
 
-        Box(modifier = Modifier.fillMaxSize().background(Color(0xFF121212))) {  // Using Box to wrap components
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val isLandscape = maxWidth > maxHeight
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(if (isLandscape) 8.dp else 16.dp)  // Apply conditional padding
+                    .verticalScroll(rememberScrollState())
                     .background(Color(0xFF121212)),  // Set background color here
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -255,10 +259,14 @@ class KontaktyActivity : ComponentActivity() {
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(Color(0xFF121212))
-                    .padding(bottom = 50.dp) // Adjust padding to avoid overlap with the system navigation bar
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(
+                        bottom = 50.dp,  // Adjust padding to avoid overlap with the system navigation bar
+                        start = if (isLandscape) 8.dp else 16.dp,  // Apply conditional padding
+                        end = if (isLandscape) 8.dp else 16.dp  // Apply conditional padding
+                    )
+                    .background(Color(0xFF121212)), // Ensure buttons are always visible
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
             ) {
                 val interactionSource1 = remember { MutableInteractionSource() }
                 val interactionSource2 = remember { MutableInteractionSource() }

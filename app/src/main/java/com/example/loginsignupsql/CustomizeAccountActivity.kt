@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,15 +32,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -78,14 +85,18 @@ class CustomizeAccountActivity : ComponentActivity() {
     fun CustomizeAccountScreen() {
         val context = LocalContext.current
         val sharedPreferences = getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
-        var username by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var fullname by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var phone by remember { mutableStateOf("") }
-        var address by remember { mutableStateOf("") }
+        var username by rememberSaveable { mutableStateOf("") }
+        var password by rememberSaveable { mutableStateOf("") }
+        var fullname by rememberSaveable { mutableStateOf("") }
+        var email by rememberSaveable { mutableStateOf("") }
+        var phone by rememberSaveable { mutableStateOf("") }
+        var address by rememberSaveable { mutableStateOf("") }
 
         val focusManager = LocalFocusManager.current
+        val focusRequesterFullname = remember { FocusRequester() }
+        val focusRequesterEmail = remember { FocusRequester() }
+        val focusRequesterPhone = remember { FocusRequester() }
+        val focusRequesterAddress = remember { FocusRequester() }
 
         LaunchedEffect(Unit) {
             val loggedInUsername = sharedPreferences.getString("USERNAME", null)
@@ -110,31 +121,79 @@ class CustomizeAccountActivity : ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp)) // Increase the height to move the text down
-            Text(text = "Customize Account", style = MaterialTheme.typography.headlineMedium, color = Color.White)
+            Spacer(modifier = Modifier.height(16.dp))  // Add padding at the top
+            Text(
+                text = "Customize Account",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(16.dp))  // Add padding after title
+            CustomTextField(
+                label = "Username",
+                value = username,
+                onValueChange = {},
+                enabled = false,
+                imeAction = ImeAction.Next,
+                focusRequester = FocusRequester.Default
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(label = "Username", value = username, onValueChange = {}, enabled = false)
+            CustomTextField(
+                label = "Password",
+                value = password,
+                onValueChange = {},
+                enabled = false,
+                imeAction = ImeAction.Next,
+                focusRequester = FocusRequester.Default
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(label = "Password", value = password, onValueChange = {}, enabled = false)
+            CustomTextField(
+                label = "Full Name",
+                value = fullname,
+                onValueChange = { fullname = it },
+                imeAction = ImeAction.Next,
+                focusRequester = focusRequesterFullname,
+                keyboardActions = KeyboardActions(
+                    onNext = { focusRequesterEmail.requestFocus() }
+                )
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(label = "Full Name", value = fullname, onValueChange = { fullname = it })
+            CustomTextField(
+                label = "Email",
+                value = email,
+                onValueChange = { email = it },
+                imeAction = ImeAction.Next,
+                focusRequester = focusRequesterEmail,
+                keyboardActions = KeyboardActions(
+                    onNext = { focusRequesterPhone.requestFocus() }
+                )
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(label = "Email", value = email, onValueChange = { email = it })
-            Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(label = "Phone", value = phone, onValueChange = { phone = it }, keyboardOptions = KeyboardOptions.Default.copy(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number))
+            CustomTextField(
+                label = "Phone",
+                value = phone,
+                onValueChange = { phone = it },
+                imeAction = ImeAction.Next,
+                focusRequester = focusRequesterPhone,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusRequesterAddress.requestFocus() }
+                )
+            )
             Spacer(modifier = Modifier.height(16.dp))
             CustomTextField(
                 label = "Address",
                 value = address,
                 onValueChange = { address = it },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                    saveUserData(username, password, fullname, email, phone, address, sharedPreferences)
-                })
+                imeAction = ImeAction.Done,
+                focusRequester = focusRequesterAddress,
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                )
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
@@ -145,7 +204,7 @@ class CustomizeAccountActivity : ComponentActivity() {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp) // Increase the height of the button
+                    .height(60.dp)
             ) {
                 Text("Save", color = Color.Black)
             }
@@ -159,7 +218,9 @@ class CustomizeAccountActivity : ComponentActivity() {
         onValueChange: (String) -> Unit,
         enabled: Boolean = true,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-        keyboardActions: KeyboardActions = KeyboardActions.Default
+        keyboardActions: KeyboardActions = KeyboardActions.Default,
+        imeAction: ImeAction = ImeAction.Default,
+        focusRequester: FocusRequester
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(text = label, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
@@ -169,10 +230,11 @@ class CustomizeAccountActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White)
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .focusRequester(focusRequester),
                 singleLine = true,
                 enabled = enabled,
-                keyboardOptions = keyboardOptions,
+                keyboardOptions = keyboardOptions.copy(imeAction = imeAction),
                 keyboardActions = keyboardActions
             )
         }
@@ -218,7 +280,12 @@ class CustomizeAccountActivity : ComponentActivity() {
 
             databaseHelper.updateUserInformation(username, fullname, email, phone, address)
             with(sharedPreferences.edit()) {
+                putString("USERNAME", username)
                 putString("PASSWORD", password)
+                putString("FULLNAME", fullname)
+                putString("EMAIL", email)
+                putString("PHONE", phone)
+                putString("ADDRESS", address)
                 apply()
             }
 

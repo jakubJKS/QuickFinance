@@ -3,6 +3,7 @@ package com.example.loginsignupsql
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,10 +43,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.example.loginsignupsql.ItemActivities.AccountBalanceActivity
 import com.example.loginsignupsql.ItemActivities.Item1Activity
 import com.example.loginsignupsql.ItemActivities.Item2Activity
 import com.example.loginsignupsql.ItemActivities.Item3Activity
@@ -52,6 +54,7 @@ import com.example.loginsignupsql.ItemActivities.Product1Activity
 import com.example.loginsignupsql.ItemActivities.Product2Activity
 import com.example.loginsignupsql.ItemActivities.Product3Activity
 import com.example.loginsignupsql.PrehladAKontaktyMenu.KontaktyActivity
+import com.example.loginsignupsql.itemactivities.AccountBalanceActivity
 import com.example.loginsignupsql.ui.theme.QuickFinanceTheme
 
 class HomeActivity : ComponentActivity() {
@@ -87,45 +90,78 @@ class HomeActivity : ComponentActivity() {
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Welcome, ${username.value}", style = MaterialTheme.typography.headlineMedium, color = Color.White)
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        tint = Color.Yellow,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                startActivity(Intent(this@HomeActivity, CustomizeAccountActivity::class.java))
-                            }
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider(color = Color.White, thickness = 1.dp)
-                Spacer(modifier = Modifier.height(16.dp))
-                HorizontalScrollItems()
-                Spacer(modifier = Modifier.height(16.dp))
-                VerticalScrollItems(modifier = Modifier.weight(1f))
-            }
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val isLandscape = maxWidth > maxHeight
 
+            if (isLandscape) {
+                LandscapeContent(username.value, context)
+            } else {
+                PortraitContent(username.value, context)
+            }
+        }
+    }
+
+    @Composable
+    fun LandscapeContent(username: String, context: Context) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 20.dp, end = 50.dp)
+        ) {
+            TopBar(username, context)
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = Color.White, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalScrollItems()
+            Spacer(modifier = Modifier.height(16.dp))
+            VerticalScrollItems(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp)) // Add some space above the buttons
+            BottomButtons(username, context)
+        }
+    }
+
+    @Composable
+    fun PortraitContent(username: String, context: Context) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            TopBar(username, context)
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = Color.White, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalScrollItems()
+            Spacer(modifier = Modifier.height(16.dp))
+            VerticalScrollItems(modifier = Modifier.weight(1f))
+
+            BottomButtons(username, context)
+        }
+    }
+
+    @Composable
+    fun TopBar(username: String, context: Context) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, end = 50.dp), // Added end padding to ensure it doesn't get cut off
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Welcome, $username", style = MaterialTheme.typography.headlineMedium, color = Color.White)
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 40.dp), // Ensure buttons are always visible
-                contentAlignment = Alignment.BottomCenter
+                    .size(24.dp)
+                    .clickable {
+                        context.startActivity(Intent(context, CustomizeAccountActivity::class.java))
+                    }
             ) {
-                BottomButtons(username.value)
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    tint = Color.Yellow,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
@@ -153,11 +189,18 @@ class HomeActivity : ComponentActivity() {
             modifier = modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            LargeItemBox("Account Balance: $0.00") { startActivity(Intent(this@HomeActivity, AccountBalanceActivity::class.java)) }
+            LargeItemBox("Account Balance") { startActivity(Intent(this@HomeActivity, AccountBalanceActivity::class.java)) }
             Spacer(modifier = Modifier.height(16.dp))
-            LargeItemBox("Product 1") { startActivity(Intent(this@HomeActivity, Product1Activity::class.java)) }
+            LargeItemBox("Nová Platba") {
+                val sharedPreferences = getSharedPreferences("com.example.loginsignupsql.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE)
+                val actualUsername = sharedPreferences.getString("USERNAME", "defaultUser") ?: "defaultUser"
+                val intent = Intent(this@HomeActivity, Product1Activity::class.java)
+                intent.putExtra("username", actualUsername)
+                Log.d("HomeActivity", "Sending username: $actualUsername")
+                startActivity(intent)
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            LargeItemBox("Product 2") { startActivity(Intent(this@HomeActivity, Product2Activity::class.java)) }
+            LargeItemBox("Získaj informácie") { startActivity(Intent(this@HomeActivity, Product2Activity::class.java)) }
             Spacer(modifier = Modifier.height(16.dp))
             LargeItemBox("Product 3") { startActivity(Intent(this@HomeActivity, Product3Activity::class.java)) }
             Spacer(modifier = Modifier.height(100.dp)) // Extra space at the bottom
@@ -189,20 +232,26 @@ class HomeActivity : ComponentActivity() {
                 .height(150.dp) // Use Dp type for height
                 .background(Color.Black, shape = RoundedCornerShape(16.dp))
                 .border(2.dp, Color.Yellow, shape = RoundedCornerShape(10.dp))
-                .padding(16.dp)
+                .padding(16.dp),
+            contentAlignment = Alignment.Center // Zarovnanie textu na stred boxu
         ) {
-            Text(text = text, style = MaterialTheme.typography.bodyLarge, color = Color.White)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), // Hrubé písmo
+                color = Color.White
+            )
         }
     }
 
     @Composable
-    fun BottomButtons(username: String) {
+    fun BottomButtons(username: String, context: Context) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(bottom = 30.dp) // Ensure buttons are visible and properly aligned
                 .background(Color(0xFF121212)), // Ensure buttons are always visible
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
         ) {
             Button(
                 onClick = { /* No action needed, already on Prehľad */ },
@@ -215,9 +264,9 @@ class HomeActivity : ComponentActivity() {
             }
             Button(
                 onClick = {
-                    val intent = Intent(this@HomeActivity, KontaktyActivity::class.java)
+                    val intent = Intent(context, KontaktyActivity::class.java)
                     intent.putExtra("username", username)
-                    startActivity(intent)
+                    context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow),
                 modifier = Modifier
